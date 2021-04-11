@@ -54,7 +54,7 @@ void encrypt(){
 	char message[256];
 	char temp[100];
 	int x, y, j, m, flag, rows, cols, index;
-	char arr[MAXROWS][MAXCOLS];
+	char encryptedArray[MAXROWS][MAXCOLS];
 	char encrypted[256];
 
 	printf("Enter the key\n");
@@ -74,9 +74,9 @@ void encrypt(){
 		 	for (y = 0; y<strlen(key); y++){
 		    	if (message[j] == '\0'){
 		            flag = 1;
-		            arr[x][y] = '_';
+		            encryptedArray[x][y] = '_';
 		        }else{
-		        	arr[x][y] = message[j++];
+		        	encryptedArray[x][y] = message[j++];
 		    	}
 		    }
 	 	}
@@ -84,7 +84,7 @@ void encrypt(){
   	rows = x;
  	cols = y;
 
-    display2dArrayForm(x,y, arr);
+    display2dArrayForm(x,y, encryptedArray);
     
     static int n=0;
     for (x = 0; x < strlen(key); x++)
@@ -92,7 +92,7 @@ void encrypt(){
         index = arrangeKey(temp);
 	    for (m = 0; m < rows; m++)
 	    {
-	        encrypted[n++] = arr[m][index];
+	        encrypted[n++] = encryptedArray[m][index];
 	    }
 	}
 	n=0;
@@ -111,7 +111,7 @@ void decrypt(){
 	char temp2[100];
 	int x, y, j, i, flag,rows,cols,index, encryptedRows;
 	char store2d[MAXROWS][MAXCOLS];
-	char darr[MAXROWS][MAXCOLS];
+	char decryptedArray[MAXROWS][MAXCOLS];
 	char* decrpytedMsg;
 	
 	printf("Enter the key\n");
@@ -145,21 +145,22 @@ void decrypt(){
 	
     for (x = 0, j = 1, y=0;x < strlen(decrypted); x++, j++)
     {
-        temp2[y++] = decrypted[x];
-        if ((j % encryptedRows) == 0)
+        temp2[y++] = decrypted[x]; //temp2[1] = o
+
+        if ((j % encryptedRows) == 0) // 0%2 = 0
         {
             temp2[y] = '\0';
-            
-            index = arrangeKey(temp);
+            index = arrangeKey(temp); // key -- e < k so, 1
             for (i = 0; i < encryptedRows; i++)
 		    {
-		        darr[i][index] = temp2[i];
+		    
+		        decryptedArray[i][index] = temp2[i]; //darr[0][1] = 
 		    }
             y = 0;
         }
     }
     printf("\nArray Retrieved is\n");
- 	decrpytedMsg = ret2dArray(rows,cols, darr);
+ 	decrpytedMsg = ret2dArray(rows,cols, decryptedArray);
  	printf("\nDecryption successful. This is your decrypted message:\n");
  	printMessage(decrpytedMsg);
 }

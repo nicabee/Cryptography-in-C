@@ -130,14 +130,13 @@ void decrypt(){
 		 	for (y = 0; y<strlen(key); y++){
 		    	if (decrypted[j] == '\0' ){
 		            flag = 1;
-		            store2d[x][y] = '_';
 		        }else{
 		        	store2d[x][y] = decrypted[j++];
 		    	}
 		    }
 	 	}
     }
-    
+
   	rows = x;
  	cols = y;
  	encryptedRows = strlen(decrypted) / strlen(key);
@@ -159,15 +158,18 @@ void decrypt(){
             y = 0;
         }
     }
-    printf("\nArray Retrieved is\n");
- 	decrpytedMsg = ret2dArray(rows,cols, decryptedArray);
+
+ 	decrpytedMsg = ret2dArray(encryptedRows,cols, decryptedArray);
  	printf("\nDecryption successful. This is your decrypted message:\n");
  	printMessage(decrpytedMsg);
+
+ 	memset(decryptedArray, 0, sizeof(char)*encryptedRows*cols);
+ 	memset(decrpytedMsg, 0, strlen(decrpytedMsg));
 }
 
 void printMessage(char msg[]){
 	int x;
-	for (x = 0; msg[x] != '\0'; x++){
+	for (x = 0; x<strlen(msg); x++){
 		printf("%c", msg[x]);
 	}
 }

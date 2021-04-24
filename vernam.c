@@ -8,19 +8,21 @@
 char* generateKey(char msg[]);
 void printString(char arr[]);
 char* encryptiondecryption(char msg[], char key[]);
+void printStringInt(char arr[]);
 void encrypt();
+void decrypt(int size);
 int main () {
 	char msg[256];
-
-
+	int x;
+	int size;
 		int choice, choice2;
 		printf("Welcome!\n");
 		printf("This encryption uses ALL ASCII values including special characters\n");
 		printf("Which may be unreadable after encryption.\n");
 		printf("This is due to the fact that XOR operation is used here to during\n");
 		printf("the encryption and decryption process.\n");
-		printf("To maintain the integrity of data, the encrypted message will highly\n");
-		printf("include special characters that are included in the ASCII table.\n");
+		printf("To maintain the integrity of data and readability, the encrypted message will highly\n");
+		printf("include numerical values that are included in the ASCII table.\n");
 		printf("\n======Do you want to proceed? 1 - Yes, 2 - No======\n");
 		scanf("%d", &choice2);
 		if(choice2 == 1){
@@ -29,8 +31,9 @@ int main () {
 			 system("cls");
 			 printf("\nWelcome to Vernam Encryption and Decryption\n");
 			 printf("\nMenu\n");
-			 printf("1. Start\n");
-			 printf("2. Exit\n");
+			 printf("1. Encrypt\n");
+			 printf("2. Decrypt\n");
+			 printf("3. Exit\n");
 			 scanf("%d",&choice);
 			  
 			 switch (choice)
@@ -44,20 +47,26 @@ int main () {
 			      	system("cls");
 			        break;
 			     case 2: 
+			     	printf("Enter key length:\n");
+			     	scanf("%d", &size);
+					decrypt(size);
+			      	getch();
+			      	system("cls");
+			        break;
+			     case 3: 
 			      	printf("Goodbye!\n"); 
 			        break;
 			     default: 
 				 	printf("Wrong Choice. Enter again\n");
 			        break;
-			 } 
-			} while (choice != 2);
+			 } //13 7 22 6 1 10 20 24 2 13 17 11 26 8 22
+			 //111 102 111 105 117 42 127 119 34 69 84 67 95 64 83 enc
+			} while (choice != 3);
 			
 		}else{
 			printf("Okay goodbye!\n");
 		}
-		
     return 0;
-    
 }
 
 void encrypt(char msg[]){
@@ -66,16 +75,46 @@ void encrypt(char msg[]){
 	char *keys;
 	char *enc;
 	char *dec;
-	
 	keys = generateKey(msg);
+	printf("\n\nKey Length:\n");
+	printf("%d", strlen(keys));
 	printf("\n");
   	printf("\nEncrypted Message\n");
   	enc = encryptiondecryption(msg, keys);
-  	printString(enc);
+  	printStringInt(enc);
   	printf("\n");
-  	printf("\nDecrypted Message\n");
-  	dec = encryptiondecryption(enc, keys);
+}
+
+void decrypt(int size){
+	int x, key, encryptd;
+	int keys[size];
+	char* dec;
+	char keys2[size], msg2[size];
+	printf("Enter your key:\n");
+	for(x=0;x<size;x++){
+		scanf("%d", &key);
+		keys[x] = key;
+	}
+	printf("Your key is:\n");
+	for(x=0;x<size;x++){
+		printf("%d ", keys[x]);
+	}
+	
+	for(x=0;x<size;x++){
+		keys2[x] = keys[x];
+	}
+
+	printf("\nInput your encrypted message:\n");
+	for(x=0;x<size;x++){
+		scanf("%d", &encryptd);
+		msg2[x] = encryptd;
+	}
+	msg2[x]='\0';
+	printf("\nDecrypted Message\n");
+  	dec = encryptiondecryption(msg2,keys2);
 	printString(dec);
+	
+	printf("\n");
 }
 
 char* encryptiondecryption(char msg[], char key[]){
@@ -95,6 +134,13 @@ void printString(char arr[]){
 		printf("%c", arr[x]);
 	}
 }
+
+void printStringInt(char arr[]){
+	int x;
+	for(x=0;arr[x]!='\0';x++){
+		printf("%d ", arr[x]);
+	}
+}
 char* generateKey(char msg[]){
 	srand(time(NULL)); 
 	int len = strlen(msg);
@@ -102,8 +148,8 @@ char* generateKey(char msg[]){
 	int x,y=0, m=0,a;
 	
 
-	printf("Your generated key is . . . \n");
-	printf("DO NOT SHARE WITH ANYONE. THIS WILL BE DESTROYED AFTER EXECUTION OF THE PROGRAM.\n");
+	printf("\nYour generated key is . . . \n");
+	printf("\nDO NOT SHARE WITH ANYONE. THIS WILL BE DESTROYED AFTER EXECUTION OF THE PROGRAM.\n");
 	int getOTP[len];
 	for(x=0;x<len;x++){
 		getOTP[x] = (rand() % (26 + 1 - 1)) + 1;

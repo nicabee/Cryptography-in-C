@@ -164,10 +164,10 @@ void getKeys(char msg[], int p, int q, int tot) {
  
 long int doMod(long int value, int tot) {
 	long int num=1;
-	while(1) {
+	while(num%value!=0) {
 		num=num+tot;
-		if(num%value==0) return(num/value);
 	}
+	return(num/value);
 }
 
 long int* encrypt(int n, char msgStore[]){ 

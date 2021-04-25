@@ -3,7 +3,6 @@
 /* This will highly affect the readability, that is why encrypted messages are displayed in terms of integers */
 
 #include<stdio.h>
-#include<conio.h>
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>

@@ -115,6 +115,8 @@ void startProg(){
  
 	getKeys(msgStore, p, q, tot);
 
+	
+	
 	retTemp = encrypt(n, msgStore); 
 	printf("\n");
 	decrypt(n, retTemp);
@@ -149,9 +151,12 @@ void getKeys(char msg[], int p, int q, int tot) {
 			flg=checkPrime(x);
 			if(flg == 1 && x != p && x != q && flg2!=1) {
 				encryptedKey[ctr]=x;
+				printf("enc%lld ", encryptedKey[ctr]);
 				flg=doMod(encryptedKey[ctr], tot);
+				printf("\n");
 				if(flg>0) {
 					decryptedKey[ctr]=flg;
+					printf("dec%lld ", decryptedKey[ctr]);
 					ctr++;
 				}
 				if(ctr==99)
@@ -176,6 +181,7 @@ long int* encrypt(int n, char msgStore[]){
 	len=strlen(msgStore);
  
  	keys = encryptedKey[0];
+ 	printf("\nKeysEnc: %d\n", keys);
 	while(x!=len) {
 		storeOne=msgStore[x];
 		storeOne=storeOne-96;
@@ -193,8 +199,10 @@ long int* encrypt(int n, char msgStore[]){
 	encrypted[x]=-1;
 
 	printf("\nSuccessfully Encrypted! Message is\n");
- 	displayInInt(encrypted);
-
+ 	//displayInInt(encrypted);
+	for (i=0;encrypted[i]!=-1;i++)
+ 
+	printf("%c",encrypted[i]);
  	return temp;
 }
 
@@ -205,6 +213,7 @@ void decrypt(int n, long int temp[]) {
  	char msgStore[256];
 	int x=0,i;
  	keys=decryptedKey[0];
+ 	printf("\nKeysDec: %d\n", keys);
 	while(encrypted[x]!=-1) {
 		storeTwo=temp[x];
 		value=1;

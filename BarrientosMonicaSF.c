@@ -78,10 +78,10 @@ int main() {
 	char pltxtName[50];
 	do 
 		{
-		 printf("\nWelcome to Monoalphabetic Encryption and Decryption\n");
+		 printf("\nWelcome to Monica's Simulation of Digital Certificates\n");
 		 printf("\nMenu\n");
 		 printf("1. Create a Text File for your plaintext. \n");
-		 printf("2. Create an MD5 Value for your plaintext. \n");
+		 printf("2. Generate MD5 Value for your plaintext. \n");
 		 printf("3. Encrypt \n");
 		 printf("4. Decrypt \n");
 		 printf("5. Exit\n");
@@ -145,25 +145,30 @@ char* chooseEncryptedTextFile(){
 }
 
 char* encryption(char message[], int key){ 
-	int x;
-	char *enc = malloc (sizeof (char) * strlen(message));
-	char *enc2 = malloc (sizeof (char) * strlen(message));
+	int x, len=strlen(message);
+	char enc[len];
+	char enc2[TEXT_SIZE];
+	char *enc3 = malloc (sizeof (char) * TEXT_SIZE);
     for (x = 0; x < strlen(message); x++) {
         if (message[x] >= 'a' && message[x] <= 'z') enc[x] = 'a' + (message[x] - 'a' + key) % 26;
         else if (message[x] >= 'A' && message[x] <= 'Z') enc[x] = 'A' + (message[x] - 'A' + key) % 26;
-        else enc[x]= ' ';	
+        else if (message[x] == ' ') enc[x] = ' ';
+        else enc[x]= message[x];	
     }
 	enc[x]='\0';
 	
 	for(x = 0; enc[x]!='\0'; x++){
 		enc2[x] = enc[x] ^ key;
 	}
-	
 	enc2[x]='\0';
+	
+	for(x = 0; enc2[x]!='\0'; x++){
+		enc3[x] = enc2[x] + key;
+	}
+	enc3[x]='\0';
+	
 	printf("\nMessage successfully encrypted!\n");
-    printf("\nEncrypted Message is:\n");
-    printKey(enc2);
-    return enc2;
+    return enc3;
 }
 void createAnMD5(){
 	char filename[50];
@@ -176,22 +181,31 @@ void createAnMD5(){
 	
 }
 char* decryption(char message[], int key){ 
-	int x;
-	char *dec = malloc (sizeof (char) * strlen(message));
-	char *dec2 = malloc (sizeof (char) * strlen(message));
+	int x, len = strlen(message);
+	char *dec = malloc (sizeof (char) * TEXT_SIZE);
+	char dec2[len];
+	char dec3[TEXT_SIZE];
+
 	
 	for(x = 0; message[x]!='\0'; x++){
-		dec2[x] = message[x] ^ key;
+		dec3[x] = message[x] - key;
 	}
+	dec3[x]='\0';
 	
+	for(x = 0; dec3[x]!='\0'; x++){
+		dec2[x] = dec3[x] ^ key;
+	}
 	dec2[x]='\0';
+
 	
 	for (x = 0; dec2[x]!='\0'; x++) {
         if (dec2[x] >= 'a' && dec2[x] <= 'z') dec[x] = 'a' + (dec2[x] - 'a' - key +26) % 26; 
         else if (dec2[x] >= 'A' && dec2[x] <= 'Z') dec[x] = 'A' + (dec2[x] - 'A' - key+26) % 26;
-        else dec[x]= ' ';
+        else if (dec2[x] == ' ') dec[x] = ' ';
+        else dec[x]= dec2[x];
     }
 	dec[x]='\0';
+	
 	printf("\nMessage successfully decrypted!\n");
     return dec;
 }
@@ -209,9 +223,13 @@ void writePlainText(char filename[], char message[]){
 char* readPlainText(char filename[]){
 	int x;
 	char* buff = malloc (sizeof (char) * TEXT_SIZE);
-    FILE *f = fopen(filename, "r");
-    fgets(buff, TEXT_SIZE, f);
+	FILE *f;
 
+    if ((f = fopen(filename,"r")) == NULL){
+       printf("Error! opening file");
+       exit(1);
+    }
+    fgets(buff, TEXT_SIZE, f);
     fclose(f);
     return buff;
 }
@@ -509,65 +527,65 @@ int checkPrime(long int y) {
 
 
 
-typedef unsigned DigestArray[4];
+typedef unsigned sourceArr[4];
 
-unsigned func0(unsigned abcd[]) {
+unsigned f1(unsigned abcd[]) {
 	return (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
 }
 
-unsigned func1(unsigned abcd[]) {
+unsigned f2(unsigned abcd[]) {
 	return (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
 }
 
-unsigned func2(unsigned abcd[]) {
+unsigned f3(unsigned abcd[]) {
 	return  abcd[1] ^ abcd[2] ^ abcd[3];
 }
 
-unsigned func3(unsigned abcd[]) {
+unsigned f4(unsigned abcd[]) {
 	return abcd[2] ^ (abcd[1] | ~abcd[3]);
 }
 
-typedef unsigned(*DgstFctn)(unsigned a[]);
+typedef unsigned(*sourceFunc)(unsigned a[]);
 
-unsigned *calctable(unsigned *k)
+unsigned *calculations(unsigned *k)
 {
-	double s, pwr;
+	double s, raised;
 	int i;
 
-	pwr = pow(2.0, 32);
+	raised = pow(2.0, 32);
 	for (i = 0; i<64; i++) {
 		s = fabs(sin(1.0 + i));
-		k[i] = (unsigned)(s * pwr);
+		k[i] = (unsigned)(s * raised);
 	}
 	return k;
 }
 
-unsigned rol(unsigned r, short N)
+unsigned rlrl(unsigned r, short N)
 {
-	unsigned  mask1 = (1 << N) - 1;
-	return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
+	unsigned  mk = (1 << N) - 1;
+	return ((r >> (32 - N)) & mk) | ((r << N) & ~mk);
 }
 
 unsigned* Algorithms_Hash_MD5(const char *msg, int mlen)
 {
-	static DigestArray h0 = { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476 };
-	static DgstFctn ff[] = { &func0, &func1, &func2, &func3 };
+	static sourceArr h0 = { 0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476 };
+	static sourceFunc ff[] = { &f1, &f2, &f3, &f4 };
 	static short M[] = { 1, 5, 3, 7 };
 	static short O[] = { 0, 1, 5, 0 };
-	static short rot0[] = { 7, 12, 17, 22 };
-	static short rot1[] = { 5, 9, 14, 20 };
-	static short rot2[] = { 4, 11, 16, 23 };
-	static short rot3[] = { 6, 10, 15, 21 };
-	static short *rots[] = { rot0, rot1, rot2, rot3 };
+	static short rt1[] = { 7, 12, 17, 22 };
+	static short rt2[] = { 5, 9, 14, 20 };
+	static short rt3[] = { 4, 11, 16, 23 };
+	static short rt4[] = { 6, 10, 15, 21 };
+	static short *rts[] = { rt1, rt2, rt3, rt4 };
 	static unsigned kspace[64];
 	static unsigned *k;
 
-	static DigestArray h;
-	DigestArray abcd;
-	DgstFctn fctn;
+	static sourceArr h;
+	sourceArr abcd;
+	sourceFunc fctn;
 	short m, o, g;
 	unsigned f;
-	short *rotn;
+	short *rtNum;
 	union {
 		unsigned w[16];
 		char     b[64];
@@ -576,7 +594,7 @@ unsigned* Algorithms_Hash_MD5(const char *msg, int mlen)
 	int grp, grps, q, p;
 	unsigned char *msg2;
 
-	if (k == NULL) k = calctable(kspace);
+	if (k == NULL) k = calculations(kspace);
 
 	for (q = 0; q<4; q++) h[q] = h0[q];
 
@@ -601,11 +619,11 @@ unsigned* Algorithms_Hash_MD5(const char *msg, int mlen)
 		for (q = 0; q<4; q++) abcd[q] = h[q];
 		for (p = 0; p<4; p++) {
 			fctn = ff[p];
-			rotn = rots[p];
+			rtNum = rts[p];
 			m = M[p]; o = O[p];
 			for (q = 0; q<16; q++) {
 				g = (m*q + o) % 16;
-				f = abcd[1] + rol(abcd[0] + fctn(abcd) + k[q + 16 * p] + mm.w[g], rotn[q % 4]);
+				f = abcd[1] + rlrl(abcd[0] + fctn(abcd) + k[q + 16 * p] + mm.w[g], rtNum[q % 4]);
 
 				abcd[0] = abcd[3];
 				abcd[3] = abcd[2];
@@ -621,8 +639,6 @@ unsigned* Algorithms_Hash_MD5(const char *msg, int mlen)
 }
 
 int* GetMD5String(const char *msg, int mlen) {
-	char* str = malloc (sizeof (char) * 33);;
-	strcpy(str, "");
 	int j, k;
 	unsigned *d = Algorithms_Hash_MD5(msg, strlen(msg));
 	MD5union u;
